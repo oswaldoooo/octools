@@ -63,3 +63,4 @@ func MaxandMin[T int | float32 | float64](value []T) (T,T){
 	}
 	return max,min
 }
+
