@@ -4,7 +4,10 @@ import (
 	"database/sql"
 	"fmt"
 	"strings"
+	"time"
+
 	"github.com/go-ini/ini"
+	_ "github.com/go-sql-driver/mysql"
 )
 const(
 	CONFPATH="conf/"
@@ -19,23 +22,24 @@ type DB struct{
 }
 type Task struct{
 	userid string
-	date string
-	time string
+	date sql.NullString
+	time sql.NullString
 	tasks string
 	emailadd string
 }
 var origin_email string
-var mailpwd string
+// var mailpwd string
 func checkerror(er error){
 	if er!=nil{
 		panic(er)
 	}
 }
-func Readpwd(mail string){
+func Readpwd(mail string) string{
 	filename:=fmt.Sprintf("%vsite-conf.ini",CONFPATH)
 	f,err:=ini.Load(filename)
 	checkerror(err)
-	mailpwd=f.Section("User").Key(origin_email).String()
+	mailpwd:=f.Section("User").Key(origin_email).String()
+	return mailpwd
 }
 func Reminde(cmd string,db *DB) {
 	cmdarr:=strings.Split(cmd, "::")
@@ -46,21 +50,38 @@ func Reminde(cmd string,db *DB) {
 	}
 	if _,ok:=cmdmap["taskid"];ok{
 		res:=Found(cmdmap["taskid"],db)
+
 		Readpwd(origin_email)
-		foo:=New(origin_email,mailpwd)
-		mess:=fmt.Sprintf("Your task is time:\n%v\nSend by CodeLab-ToDo",res.tasks)
-		foo.Send("Your task arrived!",mess,res.emailadd)
+		fmt.Printf("You got it!...%+v\n",res)
+		// foo:=New(origin_email,mailpwd)
+		// mess:=fmt.Sprintf("Your task is time:\n%v\nSend by CodeLab-ToDo",res.tasks)
+		// foo.Send("Your task arrived!",mess,res.emailadd)
 	}
 }
 func Found(value string,db *DB) (*Task){
 	d,err:=sql.Open("mysql",db.dbaddr)
+	defer d.Close()
 	checkerror(err)
 	esql:=fmt.Sprintf("select user,target_date,target_time,tasks from todo where taskid='%v'",value)
 	var task Task
-	err=d.QueryRow(esql,1).Scan(&task.userid,&task.date,&task.time,&task.tasks)
+	err=d.QueryRow(esql).Scan(&task.userid,&task.date,&task.time,&task.tasks)
 	checkerror(err)
-	esql=fmt.Sprintf("select origin_email,to_email from users where user=%v",&task.userid)
-	err=d.QueryRow(esql,1).Scan(&origin_email,&task.emailadd)
+
+	if !task.date.Valid{
+		go func (db *sql.DB)  {
+			esql:=fmt.Sprintf("update todo set target_date='%v' where taskid='%v'",time.Now().Format("2006-01-02"),value)
+			_,err:=db.Exec(esql)
+			checkerror(err)
+		}(d)
+	}
+	// fmt.Printf("%+v\n",task)
+	esql=fmt.Sprintf("select origin_email,to_email from users where user='%v'",task.userid)
+	err=d.QueryRow(esql).Scan(&origin_email,&task.emailadd)
+	// debug line
+	// fmt.Printf("esql:%v\norigin_email:%v,to_email:%v\n",esql,origin_email,task.emailadd)
+	checkerror(err)
+	esql=fmt.Sprintf("update todo set remind=%v where taskid='%v'",true,value)
+	_,err=d.Exec(esql)
 	checkerror(err)
 	return &task
 }
@@ -74,5 +95,42 @@ func (s *DB) SetDB(host string,port int,usr string,pwd string,db string){
 	// s.port=port
 	// s.pwd=pwd
 	// s.usr=usr
-	s.dbaddr=fmt.Sprintf("%v:%v@%v:%v/%v?charset=utf8",usr,pwd,host,port,db)
+	s.dbaddr=fmt.Sprintf("%v:%v@tcp(%v:%v)/%v?charset=utf8",usr,pwd,host,port,db)
+	fmt.Printf("Set mysql url:%v\n",s.dbaddr)
+}
+type remindthing struct{
+	usr string
+	task string
+	taskid string
+	omail string
+	tmail string
+	pwd string
+}
+func CheckTasks(db *DB){
+	d,err:=sql.Open("mysql",db.dbaddr)
+	defer d.Close()
+	checkerror(err)
+	datenow:=time.Now().Format("2006-01-02")
+	timenow:=time.Now().Format("15:04")
+	esql:=fmt.Sprintf("select user,tasks,taskid from todo where remind=%v and target_date='%v' and target_time='%v'",true,datenow,timenow)
+	rows,err:=d.Query(esql)
+	checkerror(err)
+	esql=fmt.Sprintf("update todo set remind=%v where remind=%v and target_date='%v' and target_time='%v'",false,true,datenow,timenow)
+	_,err=d.Exec(esql)
+	checkerror(err)
+	for rows.Next(){
+		var usrs remindthing
+		err=rows.Scan(&usrs.usr,&usrs.task,&usrs.taskid)
+		checkerror(err)
+		go SendMail(&usrs,db)
+	}
+}
+func SendMail(value *remindthing,db *DB){
+	d,err:=sql.Open("mysql",db.dbaddr)
+	checkerror(err)
+	esql:=fmt.Sprintf("select origin_email,to_email from users where user='%v'",value.usr)
+	err=d.QueryRow(esql).Scan(&value.omail,&value.tmail)
+	checkerror(err)
+	value.pwd=Readpwd(value.usr)
+	fmt.Printf("User:%v\nTask:%v\nSendMail:%v\nAcceptMail:%v\n",value.usr,value.task,value.omail,value.tmail)
 }
