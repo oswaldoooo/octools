@@ -106,7 +106,7 @@ type remindthing struct{
 	tmail string
 	pwd string
 }
-func CheckTasks(db *DB){
+func CheckTasks(db *DB,mailcore func(ac,pwd,title,body,to string)bool){
 	d,err:=sql.Open("mysql",db.dbaddr)
 	defer d.Close()
 	checkerror(err)
@@ -122,10 +122,10 @@ func CheckTasks(db *DB){
 		var usrs remindthing
 		err=rows.Scan(&usrs.usr,&usrs.task,&usrs.taskid)
 		checkerror(err)
-		go SendMail(&usrs,db)
+		go SendMail(&usrs,db,mailcore)
 	}
 }
-func SendMail(value *remindthing,db *DB){
+func SendMail(value *remindthing,db *DB,mailcore func(ac,pwd,title,body,to string)bool){
 	d,err:=sql.Open("mysql",db.dbaddr)
 	checkerror(err)
 	esql:=fmt.Sprintf("select origin_email,to_email from users where user='%v'",value.usr)
@@ -133,4 +133,14 @@ func SendMail(value *remindthing,db *DB){
 	checkerror(err)
 	value.pwd=Readpwd(value.usr)
 	fmt.Printf("User:%v\nTask:%v\nSendMail:%v\nAcceptMail:%v\n",value.usr,value.task,value.omail,value.tmail)
+	f,err:=ini.Load(fmt.Sprintf("%v%v",CONFPATH,"site-conf.ini"))
+	checkerror(err)
+	title:=f.Section("Email").Key("title").String()
+	body:=f.Section("Email").Key("body").String()
+	body=fmt.Sprintf("%v%v",body,value.task)
+	if ok:=mailcore(value.omail,value.pwd,title,body,value.tmail);!ok{
+		fmt.Println("Mission failed...")
+	}else{
+		fmt.Println("Mission success")
+	}
 }

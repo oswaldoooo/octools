@@ -2,7 +2,6 @@ package remindmetools
 import (
     "crypto/tls"
     "fmt"
-    "log"
     "net/smtp"
 )
 
@@ -13,7 +12,7 @@ type mail struct {
 
 func check(err error) {
     if err != nil {
-        log.Panic(err)
+        fmt.Println(err)
     }
 }
 
@@ -39,15 +38,15 @@ func (m mail) Send(title string, text string, toId string) {
     check(err)
 
     if err = client.Auth(auth); err != nil {
-        log.Panic(err)
+        fmt.Println(err)
     }
 
     if err = client.Mail(m.user); err != nil {
-        log.Panic(err)
+        fmt.Println(err)
     }
 
     if err = client.Rcpt(toId); err != nil {
-        log.Panic(err)
+        fmt.Println(err)
     }
 
     w, err := client.Data()
