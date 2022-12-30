@@ -34,11 +34,21 @@ func checkerror(er error){
 		panic(er)
 	}
 }
+func ReadConfPlus(parent string,args []string) map[string]string{
+	res:=make(map[string]string)
+	f,err:=ini.Load(CONFPATH)
+	checkerror(err)
+	parentnode:=f.Section(parent)
+	for _,v:=range args{
+		res[v]=parentnode.Key(v).String()
+	}
+	return res
+}
 func Readpwd(mail string) string{
 	filename:=fmt.Sprintf("%vsite-conf.ini",CONFPATH)
 	f,err:=ini.Load(filename)
 	checkerror(err)
-	mailpwd:=f.Section("User").Key(origin_email).String()
+	mailpwd:=f.Section("User").Key(mail).String()
 	return mailpwd
 }
 func Reminde(cmd string,db *DB) {
@@ -106,6 +116,9 @@ type remindthing struct{
 	tmail string
 	pwd string
 }
+
+
+
 func CheckTasks(db *DB,mailcore func(ac,pwd,title,body,to string)bool){
 	d,err:=sql.Open("mysql",db.dbaddr)
 	defer d.Close()
@@ -121,6 +134,7 @@ func CheckTasks(db *DB,mailcore func(ac,pwd,title,body,to string)bool){
 	for rows.Next(){
 		var usrs remindthing
 		err=rows.Scan(&usrs.usr,&usrs.task,&usrs.taskid)
+		usrs.pwd=Readpwd(usrs.usr)
 		checkerror(err)
 		go SendMail(&usrs,db,mailcore)
 	}
@@ -132,7 +146,7 @@ func SendMail(value *remindthing,db *DB,mailcore func(ac,pwd,title,body,to strin
 	err=d.QueryRow(esql).Scan(&value.omail,&value.tmail)
 	checkerror(err)
 	value.pwd=Readpwd(value.usr)
-	fmt.Printf("User:%v\nTask:%v\nSendMail:%v\nAcceptMail:%v\n",value.usr,value.task,value.omail,value.tmail)
+	// fmt.Printf("User:%v\nTask:%v\nSendMail:%v\nAcceptMail:%v\n",value.usr,value.task,value.omail,value.tmail)
 	f,err:=ini.Load(fmt.Sprintf("%v%v",CONFPATH,"site-conf.ini"))
 	checkerror(err)
 	title:=f.Section("Email").Key("title").String()
