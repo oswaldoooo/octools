@@ -3,6 +3,7 @@ package remindmetools
 import (
 	"database/sql"
 	"fmt"
+	"runtime"
 	"strings"
 	"time"
 
@@ -10,8 +11,9 @@ import (
 	_ "github.com/go-sql-driver/mysql"
 )
 const(
-	CONFPATH="conf/"
+	CONFPATH="conf"
 )
+var ostype=runtime.GOOS
 type DB struct{
 	// host string
 	// port int
@@ -34,9 +36,16 @@ func checkerror(er error){
 		panic(er)
 	}
 }
-func ReadConfPlus(parent string,args []string) map[string]string{
+// READ CONF FILE from path
+func ReadConfPlus(parent string,args []string,filename string) map[string]string{
 	res:=make(map[string]string)
-	f,err:=ini.Load(CONFPATH)
+	var filepath string
+	if ostype=="windows"{
+		filepath=CONFPATH+"\\"+filename
+	}else{
+		filepath=CONFPATH+"/"+filename
+	}
+	f,err:=ini.Load(filepath)
 	checkerror(err)
 	parentnode:=f.Section(parent)
 	for _,v:=range args{
