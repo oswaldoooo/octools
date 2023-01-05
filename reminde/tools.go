@@ -37,14 +37,8 @@ func checkerror(er error){
 	}
 }
 // READ CONF FILE from path
-func ReadConfPlus(parent string,args []string,filename string) map[string]string{
+func ReadConfPlus(parent string,args []string,filepath string) map[string]string{
 	res:=make(map[string]string)
-	var filepath string
-	if ostype=="windows"{
-		filepath=CONFPATH+"\\"+filename
-	}else{
-		filepath=CONFPATH+"/"+filename
-	}
 	f,err:=ini.Load(filepath)
 	checkerror(err)
 	parentnode:=f.Section(parent)
