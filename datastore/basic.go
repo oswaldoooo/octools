@@ -13,3 +13,8 @@ type ArrayQueen[T basictype] struct {
 	queen      []T
 	head, tail int
 }
+type LinkList[T basictype] struct {
+	last *LinkList[T]
+	next *LinkList[T]
+	val  T
+}

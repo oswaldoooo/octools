@@ -1,6 +1,8 @@
 package datastore
 
-import "fmt"
+import (
+	"fmt"
+)
 
 // arraystack start
 func NewStack[T basictype]() *ArrayStack[T] {
@@ -76,4 +78,123 @@ func (s *ArrayQueen[T]) PrintQueen() {
 	fmt.Println("end")
 }
 
-//arrayqueen end
+// arrayqueen end
+// linklist start
+func NewList[T basictype](value T) *LinkList[T] {
+	list := LinkList[T]{val: value}
+	return &list
+}
+func (s *LinkList[T]) AddFirst(value T) {
+	nodeadd := s
+	for nodeadd.last != nil {
+		nodeadd = nodeadd.last
+	}
+	newnode := NewList(value)
+	newnode.next = nodeadd
+	nodeadd.last = newnode
+}
+func (s *LinkList[T]) AddLast(value T) {
+	nodeadd := s
+	for nodeadd.next != nil {
+		nodeadd = nodeadd.next
+	}
+	newnode := NewList(value)
+	newnode.last = nodeadd
+	nodeadd.next = newnode
+}
+func (s *LinkList[T]) AddBeforeValue(sourcevalue T, value T) {
+	var nodeinfo = make(chan *LinkList[T])
+	go findvaluefromlist(s, sourcevalue, nodeinfo)
+	nodes := <-nodeinfo
+	close(nodeinfo)
+	newnode := NewList(value)
+	if nodes.last != nil {
+		midnode := nodes.last
+		midnode.next = newnode
+		newnode.next = nodes
+		nodes.last = newnode
+		newnode.last = midnode
+	} else {
+		nodes.last = newnode
+		newnode.next = nodes
+	}
+}
+func (s *LinkList[T]) AddAfterValue(sourcevalue, value T) {
+	var nodeinfo = make(chan *LinkList[T])
+	go findvaluefromlist(s, sourcevalue, nodeinfo)
+	nodes := <-nodeinfo
+	close(nodeinfo)
+	newnode := NewList(value)
+	if nodes.next != nil {
+		midnode := nodes.next
+		midnode.last = newnode
+		newnode.next = midnode
+		newnode.last = nodes
+		nodes.next = newnode
+	} else {
+		nodes.next = newnode
+		newnode.last = nodes
+	}
+}
+func findvaluefromlist[T basictype](node *LinkList[T], srcval T, nodechannel chan<- *LinkList[T]) {
+	if node.val == srcval {
+		nodechannel <- node
+	} else {
+		if node.last != nil {
+			go findvaluefromlist(node.last, srcval, nodechannel)
+		}
+		if node.next != nil {
+			go findvaluefromlist(node.next, srcval, nodechannel)
+		}
+	}
+}
+func (s *LinkList[T]) DeleteFirst() {
+	nodeadd := s
+	if nodeadd.isAlone() || nodeadd.last == nil {
+		nodeadd = nil
+		return
+	} else {
+		for nodeadd.last.last != nil {
+			nodeadd = nodeadd.last
+		}
+		nodeadd.last = nil
+	}
+}
+func (s *LinkList[T]) DeleteLast() {
+	nodeadd := s
+	if nodeadd.isAlone() || nodeadd.next == nil {
+		nodeadd = nil
+		return
+	} else {
+		for nodeadd.next.next != nil {
+			nodeadd = nodeadd.next
+		}
+		nodeadd.next = nil
+	}
+}
+func (s *LinkList[T]) PrintList() {
+	leftwords := ""
+	rightwords := ""
+	leftadd := s
+	rightadd := s
+	for leftadd.last != nil || rightadd.next != nil {
+		if leftadd.last != nil {
+			leftwords = fmt.Sprint(leftadd.last.val) + "=>" + leftwords
+			leftadd = leftadd.last
+		}
+		if rightadd.next != nil {
+			rightwords += "=>" + fmt.Sprint(rightadd.next.val)
+			rightadd = rightadd.next
+		}
+	}
+	fmt.Printf("%v => %v => %v\n", leftwords, s.val, rightwords)
+}
+func (s *LinkList[T]) isAlone() bool {
+	if s.last == nil && s.next == nil {
+		return true
+	} else {
+		return false
+	}
+}
+
+//linklist end

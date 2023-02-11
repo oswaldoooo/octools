@@ -1,17 +1,16 @@
 package main
 
 import (
-	"fmt"
-
 	"github.com/oswaldoooo/octools/datastore"
 )
 
 func main() {
-	queen := datastore.NewQueen[string]()
-	queen.Add("im first in")
-	queen.Add("im second in")
-	queen.Add("im third in")
-	fmt.Println(queen.Peek())
-	queen.Remove()
-	fmt.Println(queen.Peek())
+	list := datastore.NewList[string]("im first in")
+	list.AddFirst("im second in")
+	list.AddLast("im third in")
+	list.PrintList()
+	list.DeleteFirst()
+	list.PrintList()
+	list.AddFirst("im fourth in")
+	list.PrintList()
 }
