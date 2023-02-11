@@ -23,3 +23,7 @@ type ListQueen[T basictype] struct {
 	queenfront *LinkList[T]
 	length     int
 }
+type ListStack[T basictype] struct {
+	stack *LinkList[T]
+	top   int
+}

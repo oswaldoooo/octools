@@ -189,6 +189,9 @@ func (s *LinkList[T]) PrintList() {
 	}
 	fmt.Printf("%v %v %v\n", leftwords, s.val, rightwords)
 }
+func (s *LinkList[T]) GetVal() T {
+	return s.val
+}
 func (s *LinkList[T]) isAlone() bool {
 	if s.last == nil && s.next == nil {
 		return true
@@ -234,4 +237,43 @@ func (s *ListQueen[T]) PrintQueen() {
 	}
 }
 
-//listqueen end
+// listqueen end
+// liststack start
+func NewListStack[T basictype]() *ListStack[T] {
+	stack := ListStack[T]{top: 0}
+	return &stack
+}
+func (s *ListStack[T]) Push(value T) {
+	newnode := LinkList[T]{next: s.stack, val: value}
+	if s.stack == nil {
+		s.stack = &newnode
+	} else {
+		s.stack.last = &newnode
+		newnode.next = s.stack
+		s.stack = &newnode
+	}
+	s.top++
+}
+func (s *ListStack[T]) Pop() *LinkList[T] {
+	res := s.stack
+	s.stack = s.stack.next
+	s.stack.last = s.stack.last.last
+	s.top--
+	return res
+}
+func (s *ListStack[T]) Peek() *LinkList[T] {
+	res := s.stack
+	return res
+}
+func (s *ListStack[T]) PrintStack() {
+	head := s.stack
+	res := ""
+	for head != nil {
+		res += fmt.Sprint(head.val) + "=>"
+		head = head.next
+	}
+	res += "end"
+	fmt.Println(res)
+}
+
+//liststack end
