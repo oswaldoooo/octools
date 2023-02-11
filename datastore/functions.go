@@ -197,4 +197,41 @@ func (s *LinkList[T]) isAlone() bool {
 	}
 }
 
-//linklist end
+// linklist end
+// listqueen start
+func NewListQueen[T basictype]() *ListQueen[T] {
+	newqueen := &ListQueen[T]{length: 0}
+	return newqueen
+}
+func (s *ListQueen[T]) Add(value T) {
+	node := NewList(value)
+	if s.queenback == nil {
+		s.queenback = node
+		s.queenfront = node
+	} else {
+		node.next = s.queenback
+		s.queenback.last = node
+		s.queenback = node
+	}
+	s.length++
+}
+func (s *ListQueen[T]) Peek() T {
+	res := s.queenfront.val
+	return res
+}
+func (s *ListQueen[T]) Remove() {
+	if s.queenfront.isAlone() {
+		s.queenfront = s.queenback.next
+	} else {
+		s.queenfront = s.queenfront.last
+		s.queenfront.next = s.queenfront.next.next
+	}
+}
+func (s *ListQueen[T]) PrintQueen() {
+	if s.queenback != nil {
+		nodeadd := s.queenback
+		nodeadd.PrintList()
+	}
+}
+
+//listqueen end

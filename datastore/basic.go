@@ -18,3 +18,8 @@ type LinkList[T basictype] struct {
 	next *LinkList[T]
 	val  T
 }
+type ListQueen[T basictype] struct {
+	queenback  *LinkList[T]
+	queenfront *LinkList[T]
+	length     int
+}
