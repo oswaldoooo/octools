@@ -151,25 +151,25 @@ func findvaluefromlist[T basictype](node *LinkList[T], srcval T, nodechannel cha
 func (s *LinkList[T]) DeleteFirst() {
 	nodeadd := s
 	if nodeadd.isAlone() || nodeadd.last == nil {
-		nodeadd = nil
+		nodeadd = nodeadd.last
 		return
 	} else {
 		for nodeadd.last.last != nil {
 			nodeadd = nodeadd.last
 		}
-		nodeadd.last = nil
+		nodeadd.last = nodeadd.last.last
 	}
 }
 func (s *LinkList[T]) DeleteLast() {
 	nodeadd := s
 	if nodeadd.isAlone() || nodeadd.next == nil {
-		nodeadd = nil
+		nodeadd = nodeadd.next
 		return
 	} else {
 		for nodeadd.next.next != nil {
 			nodeadd = nodeadd.next
 		}
-		nodeadd.next = nil
+		nodeadd.next = nodeadd.next.next
 	}
 }
 func (s *LinkList[T]) PrintList() {
@@ -187,7 +187,7 @@ func (s *LinkList[T]) PrintList() {
 			rightadd = rightadd.next
 		}
 	}
-	fmt.Printf("%v => %v => %v\n", leftwords, s.val, rightwords)
+	fmt.Printf("%v %v %v\n", leftwords, s.val, rightwords)
 }
 func (s *LinkList[T]) isAlone() bool {
 	if s.last == nil && s.next == nil {
