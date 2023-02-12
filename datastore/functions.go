@@ -172,6 +172,18 @@ func (s *LinkList[T]) DeleteLast() {
 		nodeadd.next = nodeadd.next.next
 	}
 }
+func (s *LinkList[T]) Toarray() []T {
+	headadd := s
+	newarray := []T{}
+	for headadd.last != nil {
+		headadd = headadd.last
+	}
+	for headadd != nil {
+		newarray = append(newarray, headadd.val)
+		headadd = headadd.next
+	}
+	return newarray
+}
 func (s *LinkList[T]) PrintList() {
 	leftwords := ""
 	rightwords := ""
