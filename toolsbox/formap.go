@@ -26,6 +26,16 @@ func SortArray[T basicmath](array []T) []T {
 		newarray = compareinarray(array, usedarray, newarray)
 		// fmt.Println(newarray)
 	}
+	//if array length is odd
+	if len(array)%2 == 1 {
+		for k, v := range array {
+			letter := fmt.Sprintf("%v=%v", v, k)
+			if _, ok := usedarray[letter]; !ok {
+				newarray = append(newarray, v)
+				break
+			}
+		}
+	}
 	return newarray
 }
 
