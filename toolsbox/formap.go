@@ -3,6 +3,7 @@ package toolsbox
 import (
 	"fmt"
 	"math/rand"
+	"strconv"
 	"time"
 )
 
@@ -27,20 +28,27 @@ func SortArray[T basicmath](array []T) []T {
 	}
 	return newarray
 }
+
+var buffstring string = ""
+
 func compareinarray[T basicmath](originarray []T, usearray map[string]struct{}, savedarray []T) []T {
-	var mina, minb, minc T = 0, 0, 0
+	var mina, minb T = 0, 0
 	var posa, posb int = 0, 0
 	isdenfined := false
+	isdenfinedb := false
 	for i := 0; i < len(originarray)/2; i++ {
 		letterone := fmt.Sprintf("%v=%v", originarray[i], i)
 		lettertwo := fmt.Sprintf("%v=%v", originarray[len(originarray)-i-1], len(originarray)-i-1)
+		buffstring += "start No." + strconv.Itoa(i+1) + " compare,the mina,minb=" + fmt.Sprint(mina) + "," + fmt.Sprint(minb) + ";and this circle num is " + fmt.Sprint(originarray[i]) + "," + fmt.Sprint(originarray[len(originarray)-i-1]) + "\n"
 		if _, ok := usearray[letterone]; !ok {
 			if !isdenfined {
 				mina = originarray[i]
-				minb = originarray[i]
 				posa = i
-				posb = i
 				isdenfined = true
+			} else if !isdenfinedb {
+				minb = originarray[i]
+				posb = i
+				isdenfinedb = true
 			} else {
 				if originarray[i] < mina {
 					minb = mina
@@ -56,10 +64,12 @@ func compareinarray[T basicmath](originarray []T, usearray map[string]struct{}, 
 		if _, ok := usearray[lettertwo]; !ok {
 			if !isdenfined {
 				mina = originarray[len(originarray)-i-1]
-				minb = originarray[len(originarray)-i-1]
 				posa = len(originarray) - i - 1
-				posb = len(originarray) - i - 1
 				isdenfined = true
+			} else if !isdenfinedb {
+				minb = originarray[len(originarray)-i-1]
+				posb = len(originarray) - i - 1
+				isdenfinedb = true
 			} else {
 				if originarray[len(originarray)-i-1] < mina {
 					minb = mina
@@ -72,16 +82,8 @@ func compareinarray[T basicmath](originarray []T, usearray map[string]struct{}, 
 				}
 			}
 		}
-		if mina > minb {
-			minc = mina
-			mina = minb
-			minb = minc
-			posc := posa
-			posa = posb
-			posb = posc
-		}
 	}
-	fmt.Printf("mina:%v,minb:%v\n", mina, minb)
+	buffstring += fmt.Sprintf("mina:%v,minb:%v,usedletter:%v\n", mina, minb, usearray)
 	savedarray = append(savedarray, mina)
 	savedarray = append(savedarray, minb)
 	aletter := fmt.Sprintf("%v=%v", mina, posa)
@@ -90,6 +92,8 @@ func compareinarray[T basicmath](originarray []T, usearray map[string]struct{}, 
 	usearray[bletter] = struct{}{}
 	return savedarray
 }
+
+// length int,{max,min}(option)
 func MakeRandArray(length int, args []int) []int {
 	resarr := make([]int, length)
 	if len(args) == 0 {
