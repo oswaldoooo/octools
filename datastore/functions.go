@@ -288,4 +288,69 @@ func (s *ListStack[T]) PrintStack() {
 	fmt.Println(res)
 }
 
-//liststack end
+// liststack end
+// fuzzy match version 1.0
+func Comparestr(target string, tocompare string) bool {
+	var targetone, targettwo []byte
+	if len(target) <= len(tocompare) {
+		targetone = []byte(tocompare)
+		targettwo = []byte(target)
+	} else {
+		targetone = []byte(target)
+		targettwo = []byte(tocompare)
+	}
+	be := 0
+	rollback := false
+	smallslice := []byte{}
+	completeletters := [][]byte{}
+	for i := 0; i < len(targetone); i++ {
+		for be < len(targettwo) && targetone[i] != targettwo[be] {
+			be++
+			if rollback {
+				if len(smallslice) > 1 {
+					//之前的匹配打断，重新匹配
+					completeletters = append(completeletters, smallslice)
+					// fmt.Println("reset buff") //debug line
+				}
+				smallslice = []byte{}
+				rollback = false
+				be = 0
+			}
+		}
+		if be < len(targettwo) {
+			//证明匹配成功,开启回滚模式
+			smallslice = append(smallslice, targetone[i])
+			rollback = true
+			be++
+			if be == len(targettwo) {
+				//匹配成功，但在末尾，提交缓冲池
+				if len(smallslice) > 1 {
+					completeletters = append(completeletters, smallslice)
+					// fmt.Println("reset buff") //debug line
+				}
+				smallslice = []byte{}
+				be = 0
+				rollback = false
+			}
+		} else {
+			//不匹配，则关闭回滚模式
+			if len(smallslice) > 1 {
+				completeletters = append(completeletters, smallslice)
+				// fmt.Println("reset buff") //debug line
+			}
+			smallslice = []byte{}
+			be = 0
+			rollback = false
+		}
+	}
+	//get the rate
+	alllang := 0
+	for _, v := range completeletters {
+		alllang += len(v)
+	}
+	if alllang*100/len(targettwo) >= 50 {
+		return true
+	} else {
+		return false
+	}
+}
