@@ -6,9 +6,7 @@ import (
 	"os"
 )
 
-const (
-	ROOTPATH = "/Users/oswaldo/dev/golang/octools/"
-)
+var ROOTPATH = os.Getenv("OCTOOLS_HOME")
 
 var processlog = loginit("process")
 
