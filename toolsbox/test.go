@@ -7,6 +7,6 @@ func TestSort() {
 	newarr := SortArray(testarr)
 	fmt.Println("the test array ", testarr, "\nthe new array ", newarr)
 	if !Comparecounts(testarr, newarr) {
-		processlog.Println(buffstring)
+		// processlog.Println(buffstring)
 	}
 }

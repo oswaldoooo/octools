@@ -8,7 +8,7 @@ import (
 
 var ROOTPATH = os.Getenv("OCTOOLS_HOME")
 
-var processlog = loginit("process")
+// var processlog = loginit("process")
 
 func loginit(logname string) *log.Logger {
 	filepath := ROOTPATH + "logs/" + logname + ".log"
