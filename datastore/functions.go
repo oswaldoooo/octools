@@ -290,7 +290,7 @@ func (s *ListStack[T]) PrintStack() {
 
 // liststack end
 // fuzzy match version 1.0
-func Comparestr(target string, tocompare string) bool {
+func Comparestr(target string, tocompare string, compare_rate int) bool {
 	var targetone, targettwo []byte
 	if len(target) <= len(tocompare) {
 		targetone = []byte(tocompare)
@@ -348,7 +348,7 @@ func Comparestr(target string, tocompare string) bool {
 	for _, v := range completeletters {
 		alllang += len(v)
 	}
-	if alllang*100/len(targettwo) >= 50 {
+	if alllang*100/len(targettwo) >= compare_rate {
 		return true
 	} else {
 		return false
