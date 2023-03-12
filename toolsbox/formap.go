@@ -124,3 +124,11 @@ func MakeRandArray(length int, args []int) []int {
 	}
 	return resarr
 }
+
+//export map's keys to a slice
+func ExportMapKeys[T string | int | float64 | byte](originmap map[T]any) (res []T) {
+	for k, _ := range originmap {
+		res = append(res, k)
+	}
+	return
+}
