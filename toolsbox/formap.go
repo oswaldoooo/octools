@@ -132,3 +132,11 @@ func ExportMapKeys[T string | int | float64 | byte](originmap map[T]any) (res []
 	}
 	return
 }
+
+//export map's keys to a slice
+func ExportMapKeysArrayEdition[T string | int | float64 | byte](originmap map[T][]any) (res []T) {
+	for k, _ := range originmap {
+		res = append(res, k)
+	}
+	return
+}
