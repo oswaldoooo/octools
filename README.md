@@ -1,5 +1,5 @@
-#Octools
-##stand lib
+# Octools
+## stand lib
 get max and min from target array
 ```go
 max,min:=tools.MaxandMin(your_array_name)
@@ -19,3 +19,24 @@ read conf from ini file.default conf file path:conf/site-conf.ini
 ```go
 keyvaluemap:=remindmetools.ReadConfPlus(keyarray) //input a array that should include your all key you want,and it will return a key : value map to you
 ```
+## **DataBase Tutorial**
+#### You can use mysql database easier than before
+* Insert into table (...)values(...)
+    ```go
+    // insert into user_info (id,name,password)values("oc awesome","oswaldoooo","it's great!")
+    err := dbcontroller.Insert(map[string]string{"id": "'" + template.HTMLEscapeString("oc awesome") + "'", "name": "'" + template.HTMLEscapeString("oswaldoooo") + "'", "password": "'" + template.HTMLEscapeString("it's great!") + "'"})
+    ```
+* select ... from table where ...=...
+    ```go
+    //select id,name,password from user_info where id='oc awesome'
+    err = dbcontroller.Get(&userinfo, "id", "'oc awesome'", "id", "name", "password")
+    ```
+* update table set ...... where ....
+    ```go
+    //update user_info set name='oswaldo' where id='oc awesome'
+    err = dbcontroller.Update(map[string]string{"name": "'oswaldo'"}, "id", "'oc awesome'")
+    ```
+* delete from table where ...
+    ```go
+    err = dbcontroller.Delete("id", "'oc awesome'")
+    ```

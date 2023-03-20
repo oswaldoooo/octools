@@ -3,10 +3,8 @@ package database
 import (
 	"fmt"
 	"strings"
-	"text/template"
 
 	"github.com/jmoiron/sqlx"
-	"github.com/oswaldoooo/octools/toolsbox"
 )
 
 type DbController struct {
@@ -35,10 +33,11 @@ func (s *DbController) Get(dest interface{}, pattern, value string, args ...stri
 
 // insert into ...
 func (s *DbController) Insert(data map[string]string) (err error) {
-	argsarr := toolsbox.ExportMapKeys(data)
+	argsarr := []string{}
 	valarr := []string{}
-	for _, ve := range data {
-		valarr = append(valarr, "'"+template.HTMLEscapeString(ve)+"'")
+	for ke, ve := range data {
+		argsarr = append(argsarr, ke)
+		valarr = append(valarr, ve)
 	}
 	args_str := strings.Join(argsarr, ",")
 	val_str := strings.Join(valarr, ",")
