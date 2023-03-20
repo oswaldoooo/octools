@@ -1,7 +1,6 @@
 package jwttoken
 
 import (
-	"oc_oauth/basic"
 	"time"
 
 	"github.com/golang-jwt/jwt/v5"
@@ -9,21 +8,20 @@ import (
 
 // defined the claims
 type Custom_Claims struct {
-	UserId   string `json:"user_id"`
-	UserName string `json:"user_name"`
+	Args map[string]string `json:"args"`
 	jwt.RegisteredClaims
 }
 
 // generate token
 
-func GenerateToken(userid, username string) (token string, err error) {
+func (s *JwtToken) GenerateToken(args map[string]string) (token string, err error) {
 	claims := Custom_Claims{
-		UserId:   userid,
-		UserName: username,
+		Args: make(map[string]string),
 	}
+	claims.Args = args
 	claims.ExpiresAt = jwt.NewNumericDate(time.Now().Add(time.Duration(5) * time.Minute))
 	claims.Issuer = "brotherhood"
 	token_origin := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
-	token, err = token_origin.SignedString([]byte(basic.Secret))
+	token, err = token_origin.SignedString([]byte(s.secret))
 	return
 }
