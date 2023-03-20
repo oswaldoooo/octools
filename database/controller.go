@@ -32,6 +32,8 @@ func (s *DbController) Get(dest interface{}, pattern, value string, args ...stri
 	err = s.db.Get(dest, esql)
 	return
 }
+
+// insert into ...
 func (s *DbController) Insert(data map[string]string) (err error) {
 	argsarr := toolsbox.ExportMapKeys(data)
 	valarr := []string{}
@@ -41,6 +43,22 @@ func (s *DbController) Insert(data map[string]string) (err error) {
 	args_str := strings.Join(argsarr, ",")
 	val_str := strings.Join(valarr, ",")
 	esql := fmt.Sprintf("insert into %v (%v)values(%v)", s.table_name, args_str, val_str)
+	_, err = s.db.Exec(esql)
+	return
+}
+
+// update
+func (s *DbController) Update(setcontent map[string]string, patter, value string) (err error) {
+	setarr := []string{}
+	for ke, ve := range setcontent {
+		setarr = append(setarr, ke+"="+ve)
+	}
+	esql := fmt.Sprintf("update %v set %v where %v=%v", s.table_name, strings.Join(setarr, ","), patter, value)
+	_, err = s.db.Exec(esql)
+	return
+}
+func (s *DbController) Delete(patter, value string) (err error) {
+	esql := fmt.Sprintf("delete from %v where %v=%v", s.table_name, patter, value)
 	_, err = s.db.Exec(esql)
 	return
 }
