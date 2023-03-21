@@ -2,12 +2,17 @@ package main
 
 import (
 	"fmt"
+	"math/rand"
 	"reflect"
+	"sync"
 	"text/template"
+	"time"
 
 	"github.com/oswaldoooo/octools/authmethods"
 	"github.com/oswaldoooo/octools/database"
 	"github.com/oswaldoooo/octools/jwttoken"
+	"github.com/oswaldoooo/octools/math"
+	// "google.golang.org/appengine/runtime"
 )
 
 type user struct {
@@ -16,10 +21,43 @@ type user struct {
 	age  string
 }
 
+var mutx sync.Mutex
+
 func main() {
 	// var usr = user{id: "9999", name: "494724", age: "21"}
 	// testreflect(usr)
-	usedb()
+	// usedb()
+	// testmath()
+	// var wg *sync.WaitGroup
+	res := 0
+	count := 0
+	ti := time.Now()
+	// wg.Add(1000)
+	for i := 0; i < 10000; i++ {
+		go func() {
+			// mutx.Lock()
+			res += rand.Intn(100)
+			// mutx.Unlock()
+			count += 1
+			// wg.Done()
+		}()
+	}
+	// wg.Wait()
+	usetime := time.Since(ti)
+	fmt.Printf("use time %v,count %v\n", usetime, count)
+}
+
+func testmath() {
+	testarr := []int{}
+	for i := 0; i < 10; i++ {
+		testarr = append(testarr, rand.Intn(1000))
+	}
+	// fmt.Printf("origin array>> %v\n", testarr)
+	// max, min, _ := math.MaxandMin(testarr)
+	ti := time.Now()
+	math.MaxandMin(testarr, make(chan int), make(chan int), make(chan bool))
+	usetime := time.Since(ti)
+	fmt.Printf("[used time %v\n", usetime)
 }
 func testjwttoken() {
 	jt := jwttoken.NewJwt()
@@ -89,4 +127,5 @@ func usedb() {
 			fmt.Println("error >> ", err)
 		}
 	}
+
 }

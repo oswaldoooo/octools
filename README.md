@@ -25,16 +25,21 @@ keyvaluemap:=remindmetools.ReadConfPlus(keyarray) //input a array that should in
     ```go
     // insert into user_info (id,name,password)values("oc awesome","oswaldoooo","it's great!")
     err := dbcontroller.Insert(map[string]string{"id": "'" + template.HTMLEscapeString("oc awesome") + "'", "name": "'" + template.HTMLEscapeString("oswaldoooo") + "'", "password": "'" + template.HTMLEscapeString("it's great!") + "'"})
+    //or use inserteasily.
+    err:=dbcontroller.InsertEasily(map[string]string{"id":"oc awesome","name":"oswaldoooo","password":"it's great!"})
     ```
 * select ... from table where ...=...
     ```go
     //select id,name,password from user_info where id='oc awesome'
+    userinfo := struct{ Id, Name, Password string }{}
     err = dbcontroller.Get(&userinfo, "id", "'oc awesome'", "id", "name", "password")
     ```
 * update table set ...... where ....
     ```go
     //update user_info set name='oswaldo' where id='oc awesome'
     err = dbcontroller.Update(map[string]string{"name": "'oswaldo'"}, "id", "'oc awesome'")
+    // or use UpdateEasily
+    err=dbcontroller.UpdateEasily(map[string]string{"name":"oswaldo","id":"oc awesome"})
     ```
 * delete from table where ...
     ```go
