@@ -23,6 +23,9 @@ func (s *DbController) InsertEasily(data map[string]string) (err error) {
 	val_str := strings.Join(valarr, ",")
 	esql := fmt.Sprintf("insert into %v (%v)values(%v)", s.table_name, args_str, val_str)
 	_, err = s.db.Exec(esql)
+	if err != nil {
+		fmt.Println(esql)
+	}
 	return
 }
 
@@ -38,7 +41,16 @@ func (s *DbController) UpdateEasily(setcontent map[string]string, patter, value 
 		}
 		setarr = append(setarr, ke+"="+ve)
 	}
+	switch strings.ToLower(value) {
+	case "true", "false":
+		value = strings.ToLower(value)
+	default:
+		value = "'" + template.HTMLEscapeString(value) + "'"
+	}
 	esql := fmt.Sprintf("update %v set %v where %v=%v", s.table_name, strings.Join(setarr, ","), patter, value)
 	_, err = s.db.Exec(esql)
+	if err != nil {
+		fmt.Println(esql)
+	}
 	return
 }

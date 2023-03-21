@@ -5,7 +5,7 @@ import (
 	"math/rand"
 	"reflect"
 	"sync"
-	"text/template"
+
 	"time"
 
 	"github.com/oswaldoooo/octools/authmethods"
@@ -26,25 +26,8 @@ var mutx sync.Mutex
 func main() {
 	// var usr = user{id: "9999", name: "494724", age: "21"}
 	// testreflect(usr)
-	// usedb()
+	usedb()
 	// testmath()
-	// var wg *sync.WaitGroup
-	res := 0
-	count := 0
-	ti := time.Now()
-	// wg.Add(1000)
-	for i := 0; i < 10000; i++ {
-		go func() {
-			// mutx.Lock()
-			res += rand.Intn(100)
-			// mutx.Unlock()
-			count += 1
-			// wg.Done()
-		}()
-	}
-	// wg.Wait()
-	usetime := time.Since(ti)
-	fmt.Printf("use time %v,count %v\n", usetime, count)
 }
 
 func testmath() {
@@ -104,7 +87,8 @@ func usedb() {
 	dbcontroller := database.New("user_info", "test:123456@tcp(localhost:3306)/lab")
 	if dbcontroller != nil {
 		// insert into user_info (id,name,password)values("oc awesome","oswaldoooo","it's great!")
-		err := dbcontroller.Insert(map[string]string{"id": "'" + template.HTMLEscapeString("oc awesome") + "'", "name": "'" + template.HTMLEscapeString("oswaldoooo") + "'", "password": "'" + template.HTMLEscapeString("it's great!") + "'"})
+		// err := dbcontroller.Insert(map[string]string{"id": "'" + template.HTMLEscapeString("oc awesome") + "'", "name": "'" + template.HTMLEscapeString("oswaldoooo") + "'", "password": "'" + template.HTMLEscapeString("it's great!") + "'"})
+		err := dbcontroller.InsertEasily(map[string]string{"id": "oc awesome", "name": "oswaldoooo", "password": "it's great"})
 		if err == nil {
 			fmt.Println("insert data success")
 			userinfo := struct{ Id, Name, Password string }{}
@@ -113,7 +97,8 @@ func usedb() {
 			if err == nil {
 				fmt.Println("read data>>", userinfo)
 				//update user_info set name='oswaldo' where id='oc awesome'
-				err = dbcontroller.Update(map[string]string{"name": "'oswaldo'"}, "id", "'oc awesome'")
+				// err = dbcontroller.Update(map[string]string{"name": "'oswaldo'"}, "id", "'oc awesome'")
+				err = dbcontroller.UpdateEasily(map[string]string{"name": "oswaldo"}, "id", "oc awesome")
 				if err == nil {
 					fmt.Println("update success")
 					err = dbcontroller.Delete("id", "'oc awesome'")
