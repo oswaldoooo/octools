@@ -2,9 +2,11 @@ package database
 
 import (
 	"fmt"
+	"strings"
+	"text/template"
+
 	_ "github.com/go-sql-driver/mysql"
 	"github.com/jmoiron/sqlx"
-	"strings"
 )
 
 type DbController struct {
@@ -22,9 +24,18 @@ func New(table_name, dburl string) (controller *DbController) {
 
 // get data from mysql.example:select id,name,email from user_info where id=78;here is Get(yourstruct,"id","78","id","name","email"),if pattern is null,it'll not where
 func (s *DbController) Get(dest interface{}, pattern, value string, args ...string) (err error) {
-	args_str := strings.Join(args, ",")
+	args_str := "*"
+	if len(args) > 0 {
+		args_str = strings.Join(args, ",")
+	}
 	esql := fmt.Sprintf("select %v from %v", args_str, s.table_name)
 	if len(pattern) > 0 && len(value) > 0 {
+		switch strings.ToLower(value) {
+		case "true", "false":
+			value = strings.ToLower(value)
+		default:
+			value = "'" + template.HTMLEscapeString(value) + "'"
+		}
 		esql += " where " + pattern + "=" + value
 	}
 	err = s.db.Get(dest, esql)
