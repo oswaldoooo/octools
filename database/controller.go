@@ -2,9 +2,9 @@ package database
 
 import (
 	"fmt"
-	"strings"
-
+	_ "github.com/go-sql-driver/mysql"
 	"github.com/jmoiron/sqlx"
+	"strings"
 )
 
 type DbController struct {
