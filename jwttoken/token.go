@@ -19,8 +19,8 @@ func (s *JwtToken) GenerateToken(args map[string]string) (token string, err erro
 		Args: make(map[string]string),
 	}
 	claims.Args = args
-	claims.ExpiresAt = jwt.NewNumericDate(time.Now().Add(time.Duration(5) * time.Minute))
-	claims.Issuer = "brotherhood"
+	claims.ExpiresAt = jwt.NewNumericDate(time.Now().Add(s.Expiredtime))
+	claims.Issuer = s.Issuer
 	token_origin := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
 	token, err = token_origin.SignedString([]byte(s.secret))
 	return
