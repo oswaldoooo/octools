@@ -3,6 +3,9 @@ package datastore
 func BinarySearch(content string, origin_arr []string) (resarray []string) {
 	resarray = []string{}
 	resarray = binarysearch(content, origin_arr, 0)
+	if Comparestr(content, origin_arr[0], 50) {
+		resarray = append(resarray, origin_arr[0])
+	}
 	return
 }
 func binarysearch(content string, origin_arr []string, pos int) (resarray []string) {
