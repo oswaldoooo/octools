@@ -10,6 +10,7 @@ import (
 
 	"github.com/oswaldoooo/octools/authmethods"
 	"github.com/oswaldoooo/octools/database"
+	"github.com/oswaldoooo/octools/datastore"
 	"github.com/oswaldoooo/octools/jwttoken"
 	"github.com/oswaldoooo/octools/math"
 	// "google.golang.org/appengine/runtime"
@@ -26,7 +27,8 @@ var mutx sync.Mutex
 func main() {
 	// var usr = user{id: "9999", name: "494724", age: "21"}
 	// testreflect(usr)
-	usedb()
+	// usedb()
+	testbinarysearch()
 	// testmath()
 }
 
@@ -113,4 +115,15 @@ func usedb() {
 		}
 	}
 
+}
+
+// test binary search
+func testbinarysearch() {
+	origin_arr := []string{"oswaldo cho", "oswaldo jakson", "jakson jim", "david brown", "olina omi"}
+	resarr := datastore.BinarySearch("oswaldo", origin_arr)
+	if resarr == nil {
+		fmt.Println("not match result")
+	} else {
+		fmt.Printf("search result is %v\n", resarr)
+	}
 }
