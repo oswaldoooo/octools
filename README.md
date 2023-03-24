@@ -63,3 +63,8 @@ It's based on github.com/golang-jwt/jwt
     //claim.Args is the map you put in when you generate the token
     claim, err := jt.ParseToken(token)
     ```
+**BinarySearch**
+```go
+//the default match rate is 50%
+datasotre.BinarySearch(content,origin_array)[]string
+```
