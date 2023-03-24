@@ -28,7 +28,7 @@ func main() {
 	// var usr = user{id: "9999", name: "494724", age: "21"}
 	// testreflect(usr)
 	// usedb()
-	testbinarysearch()
+	testbinarysearchmap()
 	// testmath()
 }
 
@@ -126,4 +126,9 @@ func testbinarysearch() {
 	} else {
 		fmt.Printf("search result is %v\n", resarr)
 	}
+}
+func testbinarysearchmap() {
+	origin_map := map[string]int{"oswaldo cho": 1024, "oswaldo jakson": 256, "jakson jim": 512, "david brown": 6666, "olina omi": 1000}
+	resmap := datastore.BinarySearchForMap("oswaldo", origin_map)
+	fmt.Printf("the result is %v \n", resmap)
 }

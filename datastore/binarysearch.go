@@ -1,5 +1,9 @@
 package datastore
 
+import (
+	"github.com/oswaldoooo/octools/toolsbox"
+)
+
 func BinarySearch(content string, origin_arr []string) (resarray []string) {
 	resarray = []string{}
 	resarray = binarysearch(content, origin_arr, 0)
@@ -33,6 +37,17 @@ func binarysearch(content string, origin_arr []string, pos int) (resarray []stri
 	}
 	if len(rightarr) > 0 {
 		resarray = append(resarray, rightarr...)
+	}
+	return
+}
+
+// binary search for map
+func BinarySearchForMap[T interface{}](content string, origin_map map[string]T) (resmap map[string]T) {
+	reslist := toolsbox.ExportMapKeysAny(origin_map)
+	reskeys := BinarySearch(content, reslist)
+	resmap = make(map[string]T)
+	for _, key := range reskeys {
+		resmap[key] = origin_map[key]
 	}
 	return
 }
