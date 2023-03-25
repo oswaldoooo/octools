@@ -2,6 +2,7 @@ package toolsbox
 
 import (
 	"io/ioutil"
+	"os"
 	"strings"
 )
 
@@ -72,4 +73,30 @@ func FormatListBySymbol(origin map[string]string, path, symbol string) (bool, er
 		return false, err
 	}
 	return true, err
+}
+
+// parse the bytes array to the target map,split by custom symbol freely
+func ParseListUltra(content []byte, symbol string) (res map[string]string, err error) {
+	contentstr := string(content)
+	basicarr := strings.Split(contentstr, "\n")
+	res = make(map[string]string)
+	for _, v := range basicarr {
+		if len(v) > 2 {
+			resarr := strings.Split(v, symbol)
+			if len(resarr) == 2 {
+				//name=path
+				res[resarr[0]] = resarr[1]
+			}
+		}
+	}
+	return
+}
+
+// foramt the map to string and custom spilt sybol freely
+func FormatListUltra(origin map[string]string, symbol string) (res string) {
+	res = ""
+	for k, v := range origin {
+		res += k + symbol + v + "\n"
+	}
+	return
 }
