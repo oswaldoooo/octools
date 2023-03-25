@@ -13,6 +13,7 @@ import (
 	"github.com/oswaldoooo/octools/datastore"
 	"github.com/oswaldoooo/octools/jwttoken"
 	"github.com/oswaldoooo/octools/math"
+	"github.com/oswaldoooo/octools/toolsbox"
 	// "google.golang.org/appengine/runtime"
 )
 
@@ -28,7 +29,9 @@ func main() {
 	// var usr = user{id: "9999", name: "494724", age: "21"}
 	// testreflect(usr)
 	// usedb()
-	testbinarysearchmap()
+	// testbinarysearchmap()
+	testarray := []string{"oswaldo", "young", "cho", "jim", "jackson"}
+	testarraytomap(testarray)
 	// testmath()
 }
 
@@ -131,4 +134,9 @@ func testbinarysearchmap() {
 	origin_map := map[string]int{"oswaldo cho": 1024, "oswaldo jakson": 256, "jakson jim": 512, "david brown": 6666, "olina omi": 1000}
 	resmap := datastore.BinarySearchForMap("oswaldo", origin_map)
 	fmt.Printf("the result is %v \n", resmap)
+}
+
+func testarraytomap(array []string) {
+	res := toolsbox.ArrayToMap(array)
+	fmt.Printf("origin array %v,\n new map %v\n", array, res)
 }
