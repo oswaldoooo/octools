@@ -2,7 +2,6 @@ package toolsbox
 
 import (
 	"io/ioutil"
-	"os"
 	"strings"
 )
 
