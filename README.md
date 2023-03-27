@@ -68,3 +68,40 @@ It's based on github.com/golang-jwt/jwt
 //the default match rate is 50%
 datasotre.BinarySearch(content,origin_array)[]string
 ```
+## **Pluginer Tutorial**
+quick start your plugin mode in your program
+* **prepare your plugin configuration file.It should look like this**
+    ```xml
+    <?xml version="1.0" encoding="UTF-8"?>
+    <plugin_info>
+            <!-- the name is your plugin file's name.you can contain '.so',or not -->
+        <plugin classname="test" name="greet"/>
+        <!-- here is your own path that your project.and your project directory should also contains plugin directory.the directory name is 'plugin'-->
+        <rootpath>/Users/oswaldo/dev/golang/examples</rootpath>
+    </plugin_info>
+    ```
+* **set the pluginer in your project**
+    ```go
+    var coremap = map[string]func(*plugin.Plugin) error{"test": loadnormal}
+    //here is the path of your plugin configuration file.And the coremap(map[classname]parsing method)
+    pluginer, err := pluginer.CreatePluginer("/Users/oswaldo/dev/golang/examples/site.xml", coremap)
+    ```
+* **and your parsing method should like this**
+    ```go
+    //input *plugin.Plugin,return error
+    func(*plugin.Plugin)error
+    //this is an example
+    func loadnormal(pluginer *plugin.Plugin) (err error) {
+        srm, err := pluginer.Lookup("Pattern")
+        if err == nil {
+            pattern := *srm.(*string)
+            srm, err = pluginer.Lookup("Greet")
+            if err == nil {
+                resfunc := srm.(func(string, *int) error)
+                testfunc[pattern] = resfunc
+            }
+        }
+        return
+    }
+    ```
+* **finally,set your plugin method as global variable**
