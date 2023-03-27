@@ -13,7 +13,7 @@ import (
 type Pluginer struct {
 	classpath string
 	confinfo  *cnfinfo
-	coremap   map[string]func(*plugin.Plugin, ...any) error //scan the plugin's function
+	coremap   map[string]func(*plugin.Plugin) error //scan the plugin's function
 }
 type cnfinfo struct {
 	XMLName  xml.Name      `xml:"plugin_info"`
@@ -29,7 +29,7 @@ type plugin_info struct {
 /*
 create pluginers,and read from configure file to cache
 */
-func CreatePluginer(classpath string) (pluginer *Pluginer, err error) {
+func CreatePluginer(classpath string, coremap map[string]func(*plugin.Plugin) error) (pluginer *Pluginer, err error) {
 	content, err := ioutil.ReadFile(classpath)
 	if err == nil {
 		cnf := new(cnfinfo)
@@ -39,7 +39,7 @@ func CreatePluginer(classpath string) (pluginer *Pluginer, err error) {
 				//the path is ...../testpath,it'wll read to ...../testpath/
 				cnf.RootPath += "/"
 			}
-			pluginer = &Pluginer{classpath: classpath, confinfo: cnf, coremap: make(map[string]func(*plugin.Plugin, ...any) error)}
+			pluginer = &Pluginer{classpath: classpath, confinfo: cnf, coremap: coremap}
 		}
 	}
 	return
@@ -67,7 +67,7 @@ func (s *Pluginer) LookUpAll() (allerr []error) {
 }
 
 /*
-complex pack,put args into the target classname that need args
+complex pack,put args into the target classname that need args.this function only for test version.
 */
 func (s *Pluginer) Lookup(classname string, args ...any) (err error) {
 	pluginname := ""
@@ -94,7 +94,7 @@ func (s *Pluginer) Lookup(classname string, args ...any) (err error) {
 	if len(pluginname) > 0 && !strings.ContainsRune(pluginname, ' ') {
 		pluginer, err := toolsbox.ScanPluginByName(pluginname, s.confinfo.RootPath+"plugin")
 		if err == nil {
-			usefunc(pluginer, args...)
+			usefunc(pluginer)
 		}
 	} else {
 		err = errors.New("not find plugin file that classname is " + classname)
