@@ -1,4 +1,4 @@
-package plugin
+package pluginer
 
 import (
 	"encoding/xml"
