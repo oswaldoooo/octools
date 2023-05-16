@@ -12,12 +12,15 @@ import (
 type DbController struct {
 	db         *sqlx.DB
 	table_name string
+	DeBugMode  bool
 }
 
 func New(table_name, dburl string) (controller *DbController) {
 	dbcon, err := sqlx.Connect("mysql", dburl)
 	if err == nil {
-		controller = &DbController{db: dbcon, table_name: table_name}
+		controller = &DbController{db: dbcon, table_name: table_name, DeBugMode: false}
+	} else {
+		fmt.Printf("[error] connect to %s failed\n", dburl) //tell developer connect to database failed
 	}
 	return
 }
@@ -38,6 +41,9 @@ func (s *DbController) Get(dest interface{}, pattern, value string, args ...stri
 		}
 		esql += " where " + pattern + "=" + value
 	}
+	if s.DeBugMode {
+		fmt.Println("the execute query >> ", esql)
+	}
 	err = s.db.Get(dest, esql)
 	return
 }
@@ -53,6 +59,9 @@ func (s *DbController) Insert(data map[string]string) (err error) {
 	args_str := strings.Join(argsarr, ",")
 	val_str := strings.Join(valarr, ",")
 	esql := fmt.Sprintf("insert into %v (%v)values(%v)", s.table_name, args_str, val_str)
+	if s.DeBugMode {
+		fmt.Println("the execute query >> ", esql)
+	}
 	_, err = s.db.Exec(esql)
 	return
 }
@@ -64,11 +73,17 @@ func (s *DbController) Update(setcontent map[string]string, patter, value string
 		setarr = append(setarr, ke+"="+ve)
 	}
 	esql := fmt.Sprintf("update %v set %v where %v=%v", s.table_name, strings.Join(setarr, ","), patter, value)
+	if s.DeBugMode {
+		fmt.Println("the execute query >> ", esql)
+	}
 	_, err = s.db.Exec(esql)
 	return
 }
 func (s *DbController) Delete(patter, value string) (err error) {
 	esql := fmt.Sprintf("delete from %v where %v=%v", s.table_name, patter, value)
+	if s.DeBugMode {
+		fmt.Println("the execute query >> ", esql)
+	}
 	_, err = s.db.Exec(esql)
 	return
 }
