@@ -42,7 +42,7 @@ func (s *DbController) Get(dest interface{}, pattern, value string, args ...stri
 		esql += " where " + pattern + "=" + value
 	}
 	if s.DeBugMode {
-		fmt.Println("the execute query >> ", esql)
+		fmt.Printf("the execute query >> %s\nthe pattern length is %d,value length is %d\n", esql, len(pattern), len(value)) //debugline
 	}
 	err = s.db.Get(dest, esql)
 	return
