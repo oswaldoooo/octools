@@ -47,6 +47,27 @@ func (s *DbController) Get(dest interface{}, pattern, value string, args ...stri
 	err = s.db.Get(dest, esql)
 	return
 }
+func (s *DbController) GetFrom(dest interface{}, table_name, pattern, value string, args ...string) (err error) {
+	args_str := "*"
+	if len(args) > 0 {
+		args_str = strings.Join(args, ",")
+	}
+	esql := fmt.Sprintf("select %v from %v", args_str, table_name)
+	if len(pattern) > 0 && len(value) > 0 {
+		switch strings.ToLower(value) {
+		case "true", "false":
+			value = strings.ToLower(value)
+		default:
+			value = "'" + template.HTMLEscapeString(value) + "'"
+		}
+		esql += " where " + pattern + "=" + value
+	}
+	if s.DeBugMode {
+		fmt.Printf("the execute query >> %s\nthe pattern length is %d,value length is %d\n", esql, len(pattern), len(value)) //debugline
+	}
+	err = s.db.Get(dest, esql)
+	return
+}
 
 // insert into ...
 func (s *DbController) Insert(data map[string]string) (err error) {
@@ -59,6 +80,24 @@ func (s *DbController) Insert(data map[string]string) (err error) {
 	args_str := strings.Join(argsarr, ",")
 	val_str := strings.Join(valarr, ",")
 	esql := fmt.Sprintf("insert into %v (%v)values(%v)", s.table_name, args_str, val_str)
+	if s.DeBugMode {
+		fmt.Println("the execute query >> ", esql)
+	}
+	_, err = s.db.Exec(esql)
+	return
+}
+
+// insert into ...
+func (s *DbController) InsertInto(table_name string, data map[string]string) (err error) {
+	argsarr := []string{}
+	valarr := []string{}
+	for ke, ve := range data {
+		argsarr = append(argsarr, ke)
+		valarr = append(valarr, ve)
+	}
+	args_str := strings.Join(argsarr, ",")
+	val_str := strings.Join(valarr, ",")
+	esql := fmt.Sprintf("insert into %v (%v)values(%v)", table_name, args_str, val_str)
 	if s.DeBugMode {
 		fmt.Println("the execute query >> ", esql)
 	}
@@ -79,6 +118,27 @@ func (s *DbController) Update(setcontent map[string]string, patter, value string
 	_, err = s.db.Exec(esql)
 	return
 }
+func (s *DbController) UpdateInto(table_name string, setcontent map[string]string, patter, value string) (err error) {
+	setarr := []string{}
+	for ke, ve := range setcontent {
+		setarr = append(setarr, ke+"="+ve)
+	}
+	esql := fmt.Sprintf("update %v set %v where %v=%v", table_name, strings.Join(setarr, ","), patter, value)
+	if s.DeBugMode {
+		fmt.Println("the execute query >> ", esql)
+	}
+	_, err = s.db.Exec(esql)
+	return
+}
+func (s *DbController) Deletefrom(table_name string, patter, value string) (err error) {
+	esql := fmt.Sprintf("delete from %v where %v=%v", table_name, patter, value)
+	if s.DeBugMode {
+		fmt.Println("the execute query >> ", esql)
+	}
+	_, err = s.db.Exec(esql)
+	return
+}
+
 func (s *DbController) Delete(patter, value string) (err error) {
 	esql := fmt.Sprintf("delete from %v where %v=%v", s.table_name, patter, value)
 	if s.DeBugMode {
@@ -86,4 +146,7 @@ func (s *DbController) Delete(patter, value string) (err error) {
 	}
 	_, err = s.db.Exec(esql)
 	return
+}
+func (s *DbController) SetTable(table_name string) {
+	s.table_name = table_name
 }
