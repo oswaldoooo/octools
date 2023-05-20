@@ -105,3 +105,13 @@ quick start your plugin mode in your program
     }
     ```
 * **finally,set your plugin method as global variable**
+## **Terminal**
+**Process Bar**
+```go
+ProBar:=toolsbox.ProcessInit('=')//init process bar,and fill by char '='
+go ProcessRun(ProBar)//listen the program's process
+for i:=0;i<100;i++{
+    ProBar.Pos<-uint(i)//tell the program's process
+}
+toolsbox.ProcessFinished(ProBar)//finished the process,dont care finished more,it'll be finished when it not finished,or do nothing there
+```
