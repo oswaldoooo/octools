@@ -10,8 +10,10 @@ import (
 
 	"github.com/oswaldoooo/octools/authmethods"
 	"github.com/oswaldoooo/octools/database"
+	"github.com/oswaldoooo/octools/datastore"
 	"github.com/oswaldoooo/octools/jwttoken"
 	"github.com/oswaldoooo/octools/math"
+	"github.com/oswaldoooo/octools/toolsbox"
 	// "google.golang.org/appengine/runtime"
 )
 
@@ -26,7 +28,10 @@ var mutx sync.Mutex
 func main() {
 	// var usr = user{id: "9999", name: "494724", age: "21"}
 	// testreflect(usr)
-	usedb()
+	// usedb()
+	// testbinarysearchmap()
+	testarray := []string{"oswaldo", "young", "cho", "jim", "jackson"}
+	testarraytomap(testarray)
 	// testmath()
 }
 
@@ -113,4 +118,25 @@ func usedb() {
 		}
 	}
 
+}
+
+// test binary search
+func testbinarysearch() {
+	origin_arr := []string{"oswaldo cho", "oswaldo jakson", "jakson jim", "david brown", "olina omi"}
+	resarr := datastore.BinarySearch("oswaldo", origin_arr)
+	if resarr == nil {
+		fmt.Println("not match result")
+	} else {
+		fmt.Printf("search result is %v\n", resarr)
+	}
+}
+func testbinarysearchmap() {
+	origin_map := map[string]int{"oswaldo cho": 1024, "oswaldo jakson": 256, "jakson jim": 512, "david brown": 6666, "olina omi": 1000}
+	resmap := datastore.BinarySearchForMap("oswaldo", origin_map)
+	fmt.Printf("the result is %v \n", resmap)
+}
+
+func testarraytomap(array []string) {
+	res := toolsbox.ArrayToMap(array)
+	fmt.Printf("origin array %v,\n new map %v\n", array, res)
 }
