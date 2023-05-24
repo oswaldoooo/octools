@@ -15,6 +15,12 @@ yourarrayname=tools.Sort(yourarrayname)
 //sort plus
 yourarrayname=tools.SortPlus(yourarrayname,sort_postion)
 ```
+getbasename and dirpath
+```go
+basename:=toolsbox.GetBaseName(path)
+dirpath:=toolsbox.GetDirPath(path)
+
+```
 read conf from ini file.default conf file path:conf/site-conf.ini
 ```go
 keyvaluemap:=remindmetools.ReadConfPlus(keyarray) //input a array that should include your all key you want,and it will return a key : value map to you
