@@ -123,3 +123,7 @@ func (s *DbController) Delete(patter, value string) (err error) {
 	_, err = s.db.Exec(esql)
 	return
 }
+func (s *DbController) Exec(query string, args ...any) (err error) {
+	_, err = s.db.Exec(query, args...)
+	return
+}
