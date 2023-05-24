@@ -133,6 +133,14 @@ func ExportMapKeys[T string | int | float64 | byte](originmap map[string]T) (res
 	return
 }
 
+// the map value is unlimited
+func ExportMapKeysAny[T interface{}](originmap map[string]T) (res []string) {
+	for k, _ := range originmap {
+		res = append(res, k)
+	}
+	return
+}
+
 //export map's keys to a slice
 func ExportMapKeysArrayEdition[T string | int | float64 | byte](originmap map[T][]any) (res []T) {
 	for k, _ := range originmap {

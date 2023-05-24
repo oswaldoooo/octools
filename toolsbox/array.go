@@ -2,6 +2,10 @@ package toolsbox
 
 import "fmt"
 
+type basicdata interface {
+	int | string | bool | byte | float64
+}
+
 // need compare array,compare array
 func Comparecounts[T basicmath](originlist []T, newlist []T) bool {
 	var hashmap = make(map[T]int)
@@ -34,4 +38,13 @@ func Comparecounts[T basicmath](originlist []T, newlist []T) bool {
 		}
 	}
 	return true
+}
+
+// transfer 1D array to map,make sure your array's data were not repeat
+func ArrayToMap[T basicdata](originarr []T) (res map[T]struct{}) {
+	res = make(map[T]struct{})
+	for _, val := range originarr {
+		res[val] = struct{}{}
+	}
+	return
 }

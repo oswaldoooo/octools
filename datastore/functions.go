@@ -292,6 +292,7 @@ func (s *ListStack[T]) PrintStack() {
 // fuzzy match version 1.0
 func Comparestr(target string, tocompare string, compare_rate int) bool {
 	var targetone, targettwo []byte
+	//targetone 是长字符串，targettwo是短字符串
 	if len(target) <= len(tocompare) {
 		targetone = []byte(tocompare)
 		targettwo = []byte(target)
