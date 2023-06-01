@@ -7,6 +7,7 @@ import (
 
 	_ "github.com/go-sql-driver/mysql"
 	"github.com/jmoiron/sqlx"
+	tools "github.com/oswaldoooo/octools"
 )
 
 type DbController struct {
@@ -88,6 +89,9 @@ func (s *DbController) Insert(data map[string]string) (err error) {
 	args_str := strings.Join(argsarr, ",")
 	val_str := strings.Join(valarr, ",")
 	esql := fmt.Sprintf("insert into %v (%v)values(%v)", s.table_name, args_str, val_str)
+	if tools.Mode == tools.DEBUG && tools.Logger != nil {
+		tools.Logger.Println(esql)
+	}
 	_, err = s.db.Exec(esql)
 	return
 }
@@ -100,6 +104,9 @@ func (s *DbController) UpdateFrom(table_name string, setcontent map[string]strin
 	}
 	esql := fmt.Sprintf("update %v set %v where %v=%v", table_name, strings.Join(setarr, ","), patter, value)
 	_, err = s.db.Exec(esql)
+	if tools.Mode == tools.DEBUG && tools.Logger != nil {
+		tools.Logger.Println(esql)
+	}
 	return
 }
 
@@ -111,19 +118,31 @@ func (s *DbController) Update(setcontent map[string]string, patter, value string
 	}
 	esql := fmt.Sprintf("update %v set %v where %v=%v", s.table_name, strings.Join(setarr, ","), patter, value)
 	_, err = s.db.Exec(esql)
+	if tools.Mode == tools.DEBUG && tools.Logger != nil {
+		tools.Logger.Println(esql)
+	}
 	return
 }
 func (s *DbController) DeleteFrom(table_name, patter, value string) (err error) {
 	esql := fmt.Sprintf("delete from %v where %v=%v", table_name, patter, value)
 	_, err = s.db.Exec(esql)
+	if tools.Mode == tools.DEBUG && tools.Logger != nil {
+		tools.Logger.Println(esql)
+	}
 	return
 }
 func (s *DbController) Delete(patter, value string) (err error) {
 	esql := fmt.Sprintf("delete from %v where %v=%v", s.table_name, patter, value)
 	_, err = s.db.Exec(esql)
+	if tools.Mode == tools.DEBUG && tools.Logger != nil {
+		tools.Logger.Println(esql)
+	}
 	return
 }
 func (s *DbController) Exec(query string, args ...any) (err error) {
 	_, err = s.db.Exec(query, args...)
+	if tools.Mode == tools.DEBUG && tools.Logger != nil {
+		tools.Logger.Println(query)
+	}
 	return
 }
