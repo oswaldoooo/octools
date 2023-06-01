@@ -40,6 +40,9 @@ func (s *DbController) Get(dest interface{}, pattern, value string, args ...stri
 		esql += " where " + pattern + "=" + value
 	}
 	err = s.db.Get(dest, esql)
+	if tools.Mode == tools.DEBUG && tools.Logger != nil {
+		tools.Logger.Println(esql)
+	}
 	return
 }
 
@@ -60,6 +63,9 @@ func (s *DbController) GetFrom(dest interface{}, table_name, pattern, value stri
 		esql += " where " + pattern + "=" + value
 	}
 	err = s.db.Get(dest, esql)
+	if tools.Mode == tools.DEBUG && tools.Logger != nil {
+		tools.Logger.Println(esql)
+	}
 	return
 }
 
@@ -75,6 +81,9 @@ func (s *DbController) InsertInto(table_name string, data map[string]string) (er
 	val_str := strings.Join(valarr, ",")
 	esql := fmt.Sprintf("insert into %v (%v)values(%v)", table_name, args_str, val_str)
 	_, err = s.db.Exec(esql)
+	if tools.Mode == tools.DEBUG && tools.Logger != nil {
+		tools.Logger.Println(esql)
+	}
 	return
 }
 
