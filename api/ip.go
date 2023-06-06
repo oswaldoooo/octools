@@ -6,6 +6,9 @@ import (
 	"net/http"
 )
 
+const apikey = "X-RapidAPI-Key"
+const apihost = "X-RapidAPI-Host"
+
 type RapidApi struct {
 	RapidKey     string
 	RapidKeyVal  string
@@ -25,8 +28,8 @@ type IpInfo struct {
 	Address      string `json:"address"`
 }
 
-func NewRapidApi(key, keyval, host, hostval string) *RapidApi {
-	return &RapidApi{RapidKey: key, RapidKeyVal: keyval, RapidHost: host, RapidHostVal: hostval}
+func NewRapidApi(keyval, hostval string) *RapidApi {
+	return &RapidApi{RapidKey: apikey, RapidKeyVal: keyval, RapidHost: apihost, RapidHostVal: hostval}
 }
 func (s *RapidApi) GetIpInfo(ip string) (IpInfo, error) {
 	url := "https://ip-lookup-by-api-ninjas.p.rapidapi.com/v1/iplookup?address="
