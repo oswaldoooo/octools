@@ -95,13 +95,16 @@ func (s *DbController) Insert(data map[string]string) (err error) {
 		argsarr = append(argsarr, ke)
 		valarr = append(valarr, ve)
 	}
+
 	args_str := strings.Join(argsarr, ",")
 	val_str := strings.Join(valarr, ",")
+	symarr := make([]string, len(valarr))
+	symarr = Fill(symarr, "?", len(valarr)) //test pass
 	esql := fmt.Sprintf("insert into %v (%v)values(%v)", s.table_name, args_str, val_str)
 	if tools.Mode == tools.DEBUG && tools.Logger != nil {
 		tools.Logger.Println(esql)
 	}
-	_, err = s.db.Exec(esql)
+	_, err = s.db.Exec(esql, argsarr) //test pass
 	return
 }
 
