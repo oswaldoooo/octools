@@ -87,7 +87,7 @@ func (s *DbController) InsertInto(table_name string, data map[string]string) (er
 	return
 }
 
-// insert into ...
+// insert into ...(key1,key2,key3...)values('val1','val2','val3'...)
 func (s *DbController) Insert(data map[string]string) (err error) {
 	argsarr := []string{}
 	valarr := []string{}
@@ -98,8 +98,6 @@ func (s *DbController) Insert(data map[string]string) (err error) {
 
 	args_str := strings.Join(argsarr, ",")
 	val_str := strings.Join(valarr, ",")
-	symarr := make([]string, len(valarr))
-	symarr = Fill(symarr, "?", len(valarr)) //test pass
 	esql := fmt.Sprintf("insert into %v (%v)values(%v)", s.table_name, args_str, val_str)
 	if tools.Mode == tools.DEBUG && tools.Logger != nil {
 		tools.Logger.Println(esql)
