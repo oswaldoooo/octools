@@ -1,8 +1,10 @@
 package toolsbox
 
 import (
+	"encoding/base32"
 	"math/rand"
 	"os"
+	"strconv"
 )
 
 var ROOTPATH = os.Getenv("OCTOOLS_HOME")
@@ -24,4 +26,17 @@ func RandomMake(length int) string {
 		resbytes = append(resbytes, charlist[rand.Intn(len(charlist))])
 	}
 	return string(resbytes)
+}
+func RandomString(n int) string {
+	ans := make([]byte, n)
+	start := 0
+	for n >= 32 {
+		base32.StdEncoding.Encode(ans[start:start+32], []byte(strconv.Itoa(rand.Int())))
+		start += 32
+		n -= 32
+	}
+	if n > 0 {
+		copy(ans[start:], []byte(base32.StdEncoding.EncodeToString([]byte(strconv.Itoa(rand.Int()))))[:len(ans)-start])
+	}
+	return string(ans)
 }

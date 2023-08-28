@@ -48,3 +48,21 @@ func ArrayToMap[T basicdata](originarr []T) (res map[T]struct{}) {
 	}
 	return
 }
+
+func Join[T any](origin ...[]T) []T {
+	if len(origin) > 0 {
+		total_len := 0
+		for _, ele := range origin {
+			total_len += len(ele)
+		}
+		if total_len > 0 {
+			ans := make([]T, total_len)
+			start := 0
+			for _, ele := range origin {
+				copy(ans[start:start+len(ele)], ele)
+			}
+			return ans
+		}
+	}
+	return nil
+}
